@@ -2,7 +2,7 @@ const fs = require('fs');
 const express = require('express');
 
 // Require the JSON file and assign it to a variable
-const notesDb = require('./db/db.json');
+const notesDb = require('./public/notes.html');
 const PORT = 3001;
 
 // Initialize our app variable by setting it to the value of express()
@@ -16,3 +16,5 @@ app.get('/api', (req, res) => res.json(notesDb));
 app.listen(PORT, () =>
   console.log(`Example app listening at http://localhost:${PORT}`)
 );
+
+
