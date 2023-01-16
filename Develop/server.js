@@ -16,7 +16,7 @@ app.get("/notes", (req, res) =>
 
 //getting all and returning index.html file
 app.get("*", (req, res) =>
-  res.sendFile(path.join(__dirname, "public/index.html"))
+  res.sendFile("public/index.html")
 );
 
 // app.get("/", (req, res) => res.send("Navigate to /notes"));
@@ -24,20 +24,25 @@ app.get("*", (req, res) =>
 // app.get("/api/db", (req, res) => res.json(dbData));
 
 //api/notes should read the db.json file and return all saved notes in json
-app.get("/api/notes/:text", (req, res) => {
+app.get("/api/db.json/:text", (req, res) => {
   const requestedNotesDb = req.params.text.toLowerCase();
+  const result = [];
+
   for (let i = 0; i < dbData.length; i++) {
-    if (requestedNotesDb === dbData[i].text.toLowerCase()) {
-      return res.json(dbData[i]);
+    const addedNote = dbData[i].text;
+    if (requestedNotesDb === addedNote[i]) {
+      result.push(dbData);
     }
   }
-  return res.json("Not found");
+  return res.json(result);
 });
 
 //POST /api/notes should receive a new note to save on the request body, add it to the db.json file, and then return the new note to the client. You'll need to find a way to give each note a unique id when it's saved (look into npm packages that could do this for you).
 app.post('/api/notes', (req, res) => {
 
 })
+
+return res.json(dbData);
 
 
 
