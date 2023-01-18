@@ -2,22 +2,16 @@ const fs = require("fs");
 const express = require("express");
 const path = require("path");
 const dbData = require("./db/db.json");
+const api = require('./public/assets/js/index.js');
 // const index = require('./public/assets/js/index.js');
+//call out apiroute and htmlroute
 
 const PORT = 3001;
 const app = express();
 
 app.use(express.static("public"));
+app.use('/api', api);
 
-//getting notes and returning notes.html file
-app.get("/notes", (req, res) =>
-  res.sendFile(path.join(__dirname, "public/notes.html"))
-);
-
-//getting all and returning index.html file
-app.get("*", (req, res) =>
-  res.sendFile("public/index.html")
-);
 
 // app.get("/", (req, res) => res.send("Navigate to /notes"));
 
