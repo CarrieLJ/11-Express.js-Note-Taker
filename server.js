@@ -17,6 +17,9 @@ app.use('/', htmlRoute);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// apiRoute(app);
+// htmlRoute(app);
+
 
 
 app.listen(PORT, () =>
