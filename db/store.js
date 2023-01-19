@@ -1,55 +1,55 @@
-const router = require('express').Router()
-const util = require('util');
-const fs = require('fs');
+const router = require("express").Router();
+const util = require("util");
+const fs = require("fs");
 
-const uuid = require('../helpers/uuid');
+const uuid = require("../helpers/uuid");
 
 const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
 
 class Store {
-    read() {
-        return readFileAsync('db/db.json', 'utf8');
+  read() {
+    return readFileAsync("db/db.json", "utf8");
+  }
+
+  write(note) {
+    return writeFileAsync("db/db.json", JSON.stringify(note));
+  }
+
+  getNotes() {
+    return this.read().then((notes) => {
+      let parsedNotes;
+
+      try {
+        parsedNotes = [].concat(JSON.parse(notes));
+      } catch (err) {
+        parsedNotes = [];
+      }
+
+      return parsedNotes;
+    });
+  }
+
+  addNote(note) {
+    const { title, text } = note;
+
+    if (!title || !text) {
+      throw new Error("Title and text cannot be null");
     }
 
-    write(note) {
-        return writeFileAsync('db/db.json', JSON.stringify(note));
-    }
+    const newNote = { title, text, id: uuid() };
 
-    getNotes() {
-        return this.read().then((notes) => {
-            let parsedNotes;
+    return this.getNotes()
+      .then((notes) => [...notes, newNote])
+      .then((updateNotes) => this.write(updateNotes))
+      .then(() => newNote);
+  }
 
-            try {
-                parsedNotes = [].concat(JSON.parse(notes));
-            }   catch (err) {
-                parsedNotes = [];
-            }
-
-            return parsedNotes;
-        });
-    }
-
-    addNote(note) {
-        const { title, text } = note;
-
-        if (!title || !text) {
-            throw new Error('Title and text cannot be null');
-        }
-
-        const newNote = { title, text, id: uuid() };
-
-        return this.getNotes()
-            .then((notes) => [...notes, newNote])
-            .then((updateNotes) => this.write(updateNotes))
-            .then(() => newNote);
-    }
-
-    removeNote(id) {
-        return this.getNotes()
-        .then((notes) => notes.filter((note) => note.id !== id))
-        .then((filteredNotes) => this.write(filteredNotes));
-    }
+  removeNote(id) {
+    return this.getNotes()
+      .then((notes) => notes.filter((note) => note.id !== id))
+      .then((filteredNotes) => this.write(filteredNotes));
+  }
 }
 
 module.exports = new Store();
